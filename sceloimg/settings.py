@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary',
 ]
 
 MIDDLEWARE = [
@@ -113,7 +114,7 @@ USE_TZ = True
 
 
 # api/settings.py
-WSGI_APPLICATION = 'api.wsgi.app'
+WSGI_APPLICATION = 'sceloimg.wsgi.app'
 
 
 
