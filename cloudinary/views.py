@@ -5,3 +5,7 @@ from django.shortcuts import render
 
 def home(request):
     return render(request,"cloud/home.html")
+
+
+def ai_task(request):
+    return render(request,"cloud/ai.html")
