@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'cloudinary',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -71,7 +72,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'sceloimg.wsgi.application'
 
-
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"  # Use Django's default cache (or configure a custom one)
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-sessions",
+    }
+}
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 

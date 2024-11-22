@@ -45,6 +45,9 @@
       </div>
   </nav>
 </header>
+
+
+
       {% block body %}{% endblock body %}
 
     
@@ -117,8 +120,9 @@
       </div>
   </div>
 </footer>
-
+    <script>{% block exscript %}{% endblock exscript %}</script>
     <script src="{% static "./js/flowbite.min.js" %}"></script>
+    <script src="{% static "./js/htmx.min.js" %}"></script>
     <script>
       // On page load or when changing themes, best to add inline in `head` to avoid FOUC
       if (
