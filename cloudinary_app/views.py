@@ -1,8 +1,11 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,HttpResponseRedirect
+from django.urls import reverse
 import cloudinary.uploader
+import cloudinary.api
 from .forms import ImageForm
 import cloudinary
-from decouple import config 
+import uuid
+from cloudinary import CloudinaryImage
 from django.contrib import messages
 # Configuration       
 cloudinary.config( 
@@ -24,21 +27,87 @@ def home(request):
             if uploaded_image and image_name:
                 # Upload the image to Cloudinary
                 try:
-                    response = cloudinary.uploader.upload(uploaded_image, public_id=image_name)
-                    url = response["secure_url"]
-                    print(response["public_id"])
+                    uid = str(uuid.uuid4())
+                    response = cloudinary.uploader.upload(uploaded_image, public_id=uid)
+                    img_id = uid
 
                     # Clear the session data
                     del request.session["uploaded_image"]
                     del request.session["image_name"]
-                    return redirect(url)
+                    return redirect(reverse("cloud:process", kwargs={"img_id": img_id}))
                 except Exception as e:
-                    messages.error(request,"There is a problem with the API limits. Please try again leter.")
+                    
+                    messages.error(request,"There is a problem with the API. Please try again leter.")
                     return redirect("cloud:home")
 
     form = ImageForm()
     return render(request,"cloud/home.html",context={"form":form})
 
 
-def ai_task(request,url,img_id):
-    return render(request,"cloud/ai.html")
+def ai_task(request,img_id):
+    try:
+        img = cloudinary.api.resource(str(img_id))
+        img_url = img["secure_url"]
+    except Exception as e:
+        messages.error(request,"There is a problem with the API. Please try again leter.")
+        return redirect("cloud:home")
+    return render(request,"cloud/ai.html",context={"img":img_url,"pID":img_id})
+
+
+
+
+
+def ai_upscale(request,pID):
+    if request.method == 'POST':
+        try:
+            result = CloudinaryImage(f'{pID}').image(effect="upscale")
+            url = f"{result[10:-3]}"
+            return redirect(url)
+        except Exception as e:
+            messages.error(request,"There is a problem with the API. Please try again leter.")
+            return redirect("cloud:home")
+
+
+def enhance(request,pID):
+    if request.method == 'POST':
+        try:
+            result =CloudinaryImage(f"{pID}").image(effect="enhance")
+            url = f"{result[10:-3]}"
+            return redirect(url)
+        except Exception as e:
+            messages.error(request,"There is a problem with the API. Please try again leter.")
+            return redirect("cloud:home")
+
+def genfill(request,pID):
+    if request.method == 'POST':
+        try:
+            result =CloudinaryImage(f"{pID}").image(aspect_ratio="1:1", gravity="center", background="gen_fill", crop="pad")
+            url = f"{result[10:-3]}"
+            return redirect(url)
+        except Exception as e:
+            messages.error(request,"There is a problem with the API. Please try again leter.")
+            return redirect("cloud:home")
+
+def genreplace(request,pID):
+    if request.method == "POST":
+        replace_from = request.POST["from"]
+        replace_to = request.POST["to"]
+        try:
+            result =CloudinaryImage(f"{pID}").image(effect=f"gen_replace:from_{replace_from};to_{replace_to}")
+            url = f"{result[10:-3]}"
+            return redirect(url)
+        except Exception as e:
+            messages.error(request,"There is a problem with the API. Please try again leter.")
+            return redirect("cloud:home")
+
+
+def bgremove(request,pID):
+    if request.method == 'POST':
+        try:
+            result =CloudinaryImage(f"{pID}").image(effect="background_removal")
+            url = f"{result[10:-3]}"
+            return redirect(url)
+        except Exception as e:
+            messages.error(request,"There is a problem with the API. Please try again leter.")
+            return redirect("cloud:home")
+
