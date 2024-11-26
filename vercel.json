@@ -7,10 +7,10 @@
       "config": { "maxLambdaSize": "15mb" }
     },
     {
-      "src": "node/**/*",
+      "src": "node/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "staticfiles/css/output.css"  
+        "distDir": "../staticfiles/css/"  
       }
     },
     {
