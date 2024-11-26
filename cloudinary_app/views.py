@@ -10,6 +10,8 @@ import uuid
 from cloudinary import CloudinaryImage
 from django.contrib import messages
 import datetime
+from ipware import get_client_ip
+
 # Configuration       
 cloudinary.config( 
     cloud_name = "dgpcfijvz", 
@@ -20,13 +22,9 @@ cloudinary.config(
 
 
 
-def get_client_ip(request):
-    # Retrieve client IP from headers
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
+def get_ip(request):
+    ip, is_routable = get_client_ip(request)
+    print(is_routable)
     return ip
 
 
@@ -61,35 +59,30 @@ def home(request):
                     return redirect("cloud:home")
 
     form = ImageForm()
-    access_count = request.session.get('access_count', 0)
-    remaining_access = max(5 - access_count, 0)
     
     context = {
         "form":form,
-        'access_count': access_count,
-        'remaining_access': remaining_access
     }
     return render(request,"cloud/home.html",context=context)
 
 
 def ai_task(request,img_id):
     # Get the user's IP address
-    ip_address = get_client_ip(request)
-    
+    ip_address = get_ip(request)
+    print(ip_address)
     # Generate a unique cache key using the IP and current date
     today = datetime.date.today()
     cache_key = f"view_access_{ip_address}_{today}"
     
     # Get the current access count (default is 0)
     access_count = cache.get(cache_key, 0)
-    request.session['access_count'] = access_count
     
     if access_count >= 5:
         messages.info(request,"You have reached the maximum number of allowed accesses for today.")
         return redirect("cloud:home")
     
     # Increment the count and set it in the cache with a 24-hour timeout
-    cache.set(cache_key, access_count + 1, timeout=10)  # Timeout is 24 hours in seconds
+    cache.set(cache_key, access_count + 1, timeout=24*3600)  # Timeout is 24 hours in seconds
     try:
         img = cloudinary.api.resource(str(img_id))
         img_url = img["secure_url"]
@@ -97,7 +90,7 @@ def ai_task(request,img_id):
         messages.error(request,"There is a problem with the API. Please try again leter.")
         return redirect("cloud:home")
     messages.info(request,f"Access allowed. You have {5 - access_count - 1} accesses remaining today.")
-    return render(request,"cloud/ai.html",context={"img":img_url,"pID":img_id})
+    return render(request,"cloud/ai.html",context={"img":img_url,"pID":img_id,"ip":ip_address})
 
 
 
