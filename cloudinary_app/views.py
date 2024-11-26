@@ -69,7 +69,6 @@ def home(request):
 def ai_task(request,img_id):
     # Get the user's IP address
     ip_address = get_ip(request)
-    print(ip_address)
     # Generate a unique cache key using the IP and current date
     today = datetime.date.today()
     cache_key = f"view_access_{ip_address}_{today}"
@@ -89,8 +88,10 @@ def ai_task(request,img_id):
     except Exception as e:
         messages.error(request,"There is a problem with the API. Please try again leter.")
         return redirect("cloud:home")
+    if access_count == 0:
+        messages.info(request,"This was your last upload of the day.")
     messages.info(request,f"Access allowed. You have {5 - access_count - 1} accesses remaining today.")
-    return render(request,"cloud/ai.html",context={"img":img_url,"pID":img_id,"ip":ip_address})
+    return render(request,"cloud/ai.html",context={"img":img_url,"pID":img_id})
 
 
 

@@ -6,7 +6,7 @@
         <img class="w-full dark:hidden" src="{{img}}" alt="dashboard image">
         <img class="w-full hidden dark:block" src="{{img}}" alt="dashboard image">
         <div class="mt-4 md:mt-0">
-            <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Choose one AI feature to apply on your Image === IP:{{ip}}</h2>
+            <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Choose one AI feature to apply on your Image.</h2>
             <div class="flex item-center justify-start  flex-col gap-4">
                 <form action="{% url "cloud:ups" pID %}" method="post">
                     {% csrf_token %}
