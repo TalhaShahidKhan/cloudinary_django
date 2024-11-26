@@ -1,8 +1,15 @@
 from django.urls import path
-from .views import home,ai_task,ai_upscale,enhance,bgremove,genfill,genreplace
+from .views import home,ai_task,ai_upscale,enhance,bgremove,genfill,genreplace,limited_view
 
 
-htmx_urlpatterns = [
+
+
+urlpatterns = [
+    path('test/',limited_view,name="test"),
+
+
+    path('',home,name="home"),
+    path('process/<str:img_id>/',ai_task,name="process"),
     path('upscale/<str:pID>/',ai_upscale,name="ups"),
     path('enhance/<str:pID>/',enhance,name="enhance"),
     path('fill/<str:pID>/',genfill,name="fill"),
@@ -11,11 +18,4 @@ htmx_urlpatterns = [
 ]
 
 
-urlpatterns = [
-    path('',home,name="home"),
-    path('process/<str:img_id>/',ai_task,name="process"),
-]
-
-
-urlpatterns+=htmx_urlpatterns
 app_name="cloudinary"
