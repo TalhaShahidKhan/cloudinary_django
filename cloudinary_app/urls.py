@@ -1,11 +1,10 @@
 from django.urls import path
-from .views import home,ai_task,ai_upscale,enhance,bgremove,genfill,genreplace,limited_view
+from .views import home,ai_task,ai_upscale,enhance,bgremove,genfill,genreplace
 
 
 
 
 urlpatterns = [
-    path('test/',limited_view,name="test"),
 
 
     path('',home,name="home"),

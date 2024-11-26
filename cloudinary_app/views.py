@@ -30,11 +30,6 @@ def get_client_ip(request):
     return ip
 
 
-def limited_view(request):
-    
-    return HttpResponse()
-
-
 
 
 
