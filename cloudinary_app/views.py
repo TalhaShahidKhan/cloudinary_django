@@ -15,8 +15,8 @@ from ipware import get_client_ip
 # Configuration       
 cloudinary.config( 
     cloud_name = "dgpcfijvz", 
-    api_key = "954922678679494", 
-    api_secret = "PJt30un2scOy7-xYS4f3azBUgCU", # Click 'View API Keys' above to copy your API secret
+    api_key = "315853338388874", 
+    api_secret = "llbSbjeYlCnHKyMCbYGX1qN6l7Y", # Click 'View API Keys' above to copy your API secret
     secure=True
 )
 
